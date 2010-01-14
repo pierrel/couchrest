@@ -558,7 +558,7 @@ describe CouchRest::Database do
           'upvotes' => 10,
           'link' => 'http://beatcrave.com/2009-11-30/pete-doherty-kicked-out-for-nazi-anthem/'})['id']
     end
-    it "should work under normal conditions" do
+    it "should update under normal conditions" do
       @db.update_doc @id do |doc|
         doc['upvotes'] += 1
         doc
@@ -595,6 +595,14 @@ describe CouchRest::Database do
         end
       end.should_not raise_error
       @db.get(@id)['upvotes'].should == 16
+    end
+    it "should do nothing if the yield returns nil" do
+      before_update = @db.get @id
+      returned = @db.update_doc @id do |doc|
+        nil
+      end
+      returned.should == nil
+      @db.get(@id).should == before_update
     end
   end
   
